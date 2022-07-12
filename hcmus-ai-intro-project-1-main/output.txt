@@ -1,0 +1,2 @@
+Cost of the path: 20
+Number of nodes expanded: 204

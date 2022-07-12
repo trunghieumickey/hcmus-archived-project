@@ -1,0 +1,28 @@
+name: "C++ Build"
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  analyze:
+    name: Build C++
+    runs-on: windows-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [ 'cpp' ]
+  
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Build GNU C++
+      run: g++ -std=c++2a **.cpp ScreenControl/cScreen.cpp Obstacle/cObstacle.cpp Obstacle/Animal/**.cpp Obstacle/Vehicle/**.cpp People/cPeople.cpp Menu/**.cpp -o main

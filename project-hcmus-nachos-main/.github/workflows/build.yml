@@ -1,0 +1,38 @@
+name: "C++ Build"
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  analyze:
+    name: Build C++
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [ 'cpp' ]
+  
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Install GCC-11
+      run: sudo apt-get update && sudo apt-get install -y gcc-11 g++-11 gcc-11-multilib g++-11-multilib && sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 110 --slave /usr/bin/g++ g++ /usr/bin/g++-11 --slave /usr/bin/gcov gcov /usr/bin/gcov-11
+
+    - name: Make NachOS
+      run: cd NachOS-4.0/code/build.linux && make depend -j$(($(nproc)+1)) && make -j$(($(nproc)+1)) && make clean
+
+    - name: Make COFF2NOFF
+      run: cd NachOS-4.0/coff2noff && make -j$(($(nproc)+1)) && make clean
+
+    - name: Make Tests
+      run: cd NachOS-4.0/code/test && make -j$(($(nproc)+1)) && make clean
+      
