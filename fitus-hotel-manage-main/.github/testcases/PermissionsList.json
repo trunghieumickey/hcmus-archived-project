@@ -1,0 +1,17 @@
+[
+"user.basic",
+"user.tier1",
+"user.tier2",
+"user.tier3",
+"user.tier4",
+"user.tier5",
+"user.access.gym",
+"user.access.food",
+"user.access.pool",
+"staff.basic",
+"staff.userinfo",
+"staff.room",
+"admin.shell",
+"admin.log",
+"admin.perm"
+]

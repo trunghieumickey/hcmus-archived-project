@@ -1,0 +1,17 @@
+[
+    {
+        "ID": "A",
+        "Name": "Colorplate Saigon Hotel",
+        "Address": "0000 Thu Duc"
+    },
+    {
+        "ID": "B",
+        "Name": "Colorplate Danang Hotel",
+        "Address": "1234 Da Nang"
+    },
+    {
+        "ID": "C",
+        "Name": "Colorplate Hanoi Hotel",
+        "Address": "5678 Ha Noi"
+    }
+]

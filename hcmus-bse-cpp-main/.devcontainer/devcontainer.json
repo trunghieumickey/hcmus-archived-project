@@ -1,0 +1,27 @@
+{
+	"name": "Ubuntu",
+	"build": {
+		"dockerfile": "Dockerfile",
+		"args": { "VARIANT": "ubuntu-22.04" }
+	},
+	"settings": {
+		"files.exclude": {
+			"**/.devcontainer": true
+		},
+		"workbench.colorTheme": "Default Dark+",
+		"files.autoSave": "off",
+		"window.menuBarVisibility": "classic",
+		"files.insertFinalNewline": true,
+    		"explorer.sortOrder": "type",
+    		"search.sortOrder": "type"
+	},
+	"postCreateCommand": "sudo apt update && sudo apt full-upgrade -y",
+	"extensions": ["ms-vscode.cpptools-extension-pack"],
+	"remoteUser": "vscode",
+	"features": {
+		"powershell": "latest",
+		"ghcr.io/rocker-org/devcontainer-features/apt-packages:latest": {
+       			"packages": "build-essential,gdb"
+    		}
+	}
+}
