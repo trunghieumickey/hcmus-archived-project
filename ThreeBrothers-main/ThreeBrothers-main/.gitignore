@@ -1,0 +1,4 @@
+.bak-mo
+.vscode
+/libs/Arduino/Resources/Source/Arduino/x64*
+/libs/Arduino/Resources/Source/Arduino/Win32*

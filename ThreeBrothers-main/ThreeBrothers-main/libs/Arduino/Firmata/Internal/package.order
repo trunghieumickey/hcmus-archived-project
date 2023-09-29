@@ -1,0 +1,12 @@
+ExternalFirmata
+PinConnector
+BoardConnector
+readAnalogPin
+writeAnalogPin
+readDigitalPin
+writeDigitalPin
+updateBoard
+getBoardId
+writeServoPin
+numSentMessages
+numReceivedMessages

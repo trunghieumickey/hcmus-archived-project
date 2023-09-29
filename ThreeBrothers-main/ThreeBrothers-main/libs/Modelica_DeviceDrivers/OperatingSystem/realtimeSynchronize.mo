@@ -1,0 +1,18 @@
+within Modelica_DeviceDrivers.OperatingSystem;
+function realtimeSynchronize
+  "Deprecated. Use rtSyncSynchronize instead. Pauses the simulation until synchronization with real-time is achieved"
+  extends Modelica.Icons.Function;
+  extends Modelica.Icons.ObsoleteModel;
+  input Modelica_DeviceDrivers.OperatingSystem.RealTimeSynchronization rtSync;
+  input Real simTime;
+  input Boolean enableScaling = false "true, enable real-time scaling, else disable scaling";
+  input Real scaling(min=0) = 1 "real-time scaling factor; > 1 means the simulation is made slower than real-time";
+  output Real calculationTime;
+  output Real availableTime;
+  external "C" calculationTime = MDD_realtimeSynchronize(rtSync, simTime, enableScaling, scaling, availableTime)
+  annotation(Include = "#include \"MDDRealtimeSynchronize.h\"",
+           Library = {"rt", "Winmm"},
+           __iti_dll = "ITI_MDD.dll",
+           __iti_dllNoExport = true);
+  annotation(__ModelicaAssociation_Impure=true);
+end realtimeSynchronize;
