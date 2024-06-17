@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="title text-center mb-4">
+    Welcome, {{ name }}!
+</h1>
+
+<div class="flex justify-center">
+    <table class="table-auto bg-white rounded-lg shadow-md w-full md:w-3/4 lg:w-1/2">
+        <thead class="bg-gray-200">
+            <tr>
+                <th class="px-4 py-2">STT</th>
+                <th class="px-4 py-2">Mã đơn hàng</th>
+                <th class="px-4 py-2">Ngày đặt hàng</th>
+                <th class="px-4 py-2">Tổng tiền</th>
+                <th class="px-4 py-2">Trạng thái</th>
+                <th class="px-4 py-2">Cửa hàng cần đến</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <td class="border px-4 py-2">{{ loop.index }}</td>
+                <td class="border px-4 py-2">{{ order.id }}</td>
+                <td class="border px-4 py-2">{{ order.date }}</td>
+                <td class="border px-4 py-2">{{ order.total|format_price }}</td>
+                <td class="border px-4 py-2">{{ order.status }}</td>
+                <td class="border px-4 py-2">{{ order.store_address }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="flex justify-around my-8">
+    <div class="border bg-gray-100 border-gray-300 rounded w-64 flex items-center justify-center">
+        <img src="{{ product.image }}" class="w-full ">
+    </div>
+    <div class="w-1/2">
+        <p class="font-bold text-xl">{{ product.title }}</p>
+        <p class="text-red-500 font-bold">{{ product.price }} đ</p>
+        <p class="font-bold">Thông tin sản phẩm</p>
+        {% for i in range(infos|length) %}
+        <p class="pl-8 text-lg">
+            {{ infos[i].key }}: {{ infos[i].content }}<br>
+        </p>
+        {% endfor %}
+        <button
+            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-4"
+            onclick="this.className='bg-red-500 text-white font-bold py-2 px-4 rounded mt-4';">
+            <a href="{{ url_for('main.add_to_cart', code=product.code)}}"
+                onclick="this.innerText = 'Đã thêm vào giỏ hàng'; ">Thêm vào giỏ hàng</a>
+        </button>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% set category, message = messages.pop() %}
+        <div class="alert alert-{{ category }}">
+            {{ message }}
+        </div>
+        {% endif %}
+        {% endwith %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1 class="text-center text-2xl font-bold my-4">Sản phẩm bạn tìm kiếm</h1>
+<div class="flex flex-wrap justify-around">
+    {% for product in products %}
+    <a href="{{url_for('main.product_info', code=product.code)}}" class="w-64 m-4">
+        <div class="border bg-gray-100 border-gray-300 rounded overflow-hidden">
+            <img src="{{ product.image }}" class="w-full">
+            <p class="text-center font-bold">{{ product.title }}</p>
+            <p class="text-center font-bold text-red-500">{{ product.price }} đ</p>
+        </div>
+    </a>
+    {% endfor %}
+</div>
+{% endblock %}

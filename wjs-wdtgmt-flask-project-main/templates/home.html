@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="text-center text-2xl font-bold my-4">Sản phẩm mới</h1>
+<div class="flex flex-wrap justify-around" id="products">
+    {% for product in products %}
+    <a href="{{url_for('main.product_info', code=product.code)}}" class="w-64 m-4">
+        <div class="border bg-gray-100 border-gray-300 rounded overflow-hidden">
+            <img src="{{ product.image }}" class="w-full">
+            <p class="text-center font-bold">{{ product.title }}</p>
+            <p class="text-center font-bold text-red-500">{{ product.price|format_price }} đ</p>
+        </div>
+    </a>
+    {% endfor %}
+</div>
+<div class="flex justify-center my-4">
+    {% if pagination.has_prev %}
+    <a href="{{ url_for('main.index', page=pagination.prev_num) }}" class="border mx-2 py-1 px-4 rounded">Previous</a>
+    {% endif %}
+    {% for page in pagination.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+    {% if page %}
+    {% if page != pagination.page %}
+    <a href="{{ url_for('main.index', page=page) }}" class="border mx-2 py-1 px-4 rounded">{{ page
+        }}</a>
+    {% else %}
+    <a href="{{ url_for('main.index', page=page) }}" class="border mx-2 py-1 px-4 rounded bg-blue-500 text-white">{{
+        page }}</a>
+    {% endif %}
+    {% else %}
+    <span class="border mx-2 py-1 px-4 rounded">...</span>
+    {% endif %}
+    {% endfor %}
+    {% if pagination.has_next %}
+    <a href="{{ url_for('main.index', page=pagination.next_num) }}" class="border mx-2 py-1 px-4 rounded">Next</a>
+    {% endif %}
+</div>
+{% endblock %}
+
+<!-- <h1 class="text-center text-2xl font-bold my-4">Sản phẩm mới</h1>
+<div class="flex flex-wrap justify-around">
+    <a href="{{url_for('main.product_info')}}" class="w-64 m-4">
+        <div class="border bg-gray-100 border-gray-300 rounded overflow-hidden">
+            <img src="https://cdn.pnj.io/images/thumbnails/300/300/detailed/88/gbxmxmw001330-bong-tai-vang-trang-10k-dinh-da-ecz-swarovski-pnj.png"
+                class="w-full">
+            <p class="text-center font-bold">Tên sản phẩm</p>
+            <p class="text-center text-red-500">100.000.000 đ</p>
+        </div>
+    </a>
+    <a href="{{url_for('main.product_info')}}" class="w-64 m-4">
+        <div class="border bg-gray-100 border-gray-300 rounded overflow-hidden">
+            <img src="https://cdn.pnj.io/images/thumbnails/300/300/detailed/82/gmxmxmw001392-mat-day-chuyen-vang-trang-10k-dinh-da-ecz-swarovski-pnj-01.png"
+                class="w-full">
+            <p class="text-center font-bold">Tên sản phẩm</p>
+            <p class="text-center text-red-500">100.000.000 đ</p>
+        </div>
+    </a>
+    <a href="{{url_for('main.product_info')}}" class="w-64 m-4">
+        <div class="border bg-gray-100 border-gray-300 rounded overflow-hidden">
+            <img src="https://cdn.pnj.io/images/thumbnails/300/300/detailed/82/gnxmxmw001742-nhan-vang-trang-10k-dinh-da-ecz-swarovski-pnj.png"
+                class="w-full">
+            <p class="text-center font-bold">Tên sản phẩm</p>
+            <p class="text-center text-red-500">100.000.000 đ</p>
+        </div>
+    </a>
+    <a href="{{url_for('main.product_info')}}" class="w-64 m-4">
+        <div class="border bg-gray-100 border-gray-300 rounded overflow-hidden">
+            <img src="https://cdn.pnj.io/images/thumbnails/300/300/detailed/44/gnxmxmw000195-nhan-vang-trang-10k-dinh-da-ecz-swarovski-pnj-01.png"
+                class="w-full">
+            <p class="text-center font-bold">Tên sản phẩm</p>
+            <p class="text-center text-red-500">100.000.000 đ</p>
+        </div>
+    </a>
+</div> -->

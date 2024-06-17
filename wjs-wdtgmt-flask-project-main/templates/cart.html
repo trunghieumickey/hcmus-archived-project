@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div id="empty-cart-message" class="hidden flex items-center justify-center min-h-screen text-center">You don't have
+    anything in your cart.</div>
+<div id="cart">
+    {% for product in products %}
+    <div class="product_box" data-product-id="{{ product.code }}">
+        <div class="flex-col border bg-gray-200 mx-80 mt-10">
+            <div class="flex">
+                <input type="checkbox" class="m-5 w-5 h-5 product-checkbox" data-price="{{ product.price }}"
+                    data-product-id="{{product.code}}" , data-quantity="1">
+                <div class="border bg-gray-100 border-gray-300 rounded">
+                    <img src="{{ product.image }}" class="h-48">
+                </div>
+                <div class="ml-10">
+                    <a href="{{ url_for('main.product_info', code=product.code) }}" class="hover:underline">
+                        <p class="font-bold text-xl">{{ product.title }}</p>
+                    </a>
+                    <p class="text-red-500 font-bold">{{ product.price|format_price }} đ</p>
+                    <p class="text-sm">
+                        Số lượng
+                        <button class="mx-2 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded"
+                            onclick="decrease('{{ product.code }}')">-</button>
+                        <input type="text" data-product-id="{{product.code}}" value="1" min="1" max="5"
+                            class="quantity border-2 border-gray-300 rounded w-8 text-center">
+                        <button class="mx-2 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded"
+                            onclick="increase('{{ product.code }}')">+</button>
+                    </p>
+                    <button class="delete-button" onclick="removeProduct('{{product.code}}')"><i
+                            class="fas fa-trash"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+    <div class="sticky bottom-0 border bg-white border-gray-400 rounded mx-80 mt-10 flex items-center justify-between">
+        <p class="font-bold text-xl ml-10">Tạm tính:
+            <span id="total-price" class="text-red-500 font-bold">0 đ</span>
+        </p>
+        <div class="text-right mr-10">
+            <button class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                <a id="order" onclick="getSelectedProducts()" method="POST">Mua</a>
+            </button>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    function updateCartUI() {
+        var numProducts = document.querySelectorAll('.product_box').length;
+        console.log("There are " + numProducts + " products in the cart.");
+        //if there are no products in the cart, display a message
+        if (numProducts === 0) {
+            document.getElementById('empty-cart-message').classList.remove('hidden');
+            document.getElementById('cart').classList.add('hidden');
+        } else {
+            document.getElementById('empty-cart-message').classList.add('hidden');
+            document.getElementById('cart').classList.remove('hidden');
+        }
+    }
+
+    function reloadCart() {
+        fetch('/cart')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('cart').innerHTML = data.html;
+                    updateCartUI();
+                }
+                else {
+                    console.error('Error:', data.message);
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+    }
+
+    function updateTotalPrice() {
+        var totalPrice = 0;
+        document.querySelectorAll('.product-checkbox:checked').forEach(function (checkedCheckbox) {
+            var price = parseInt(checkedCheckbox.dataset.price);
+            var quantity = parseInt(checkedCheckbox.dataset.quantity || '1');
+            totalPrice += price * quantity;
+        });
+        localStorage.setItem('totalPrice', totalPrice);
+        document.getElementById('total-price').textContent = totalPrice.toLocaleString('en-US') + ' đ';
+    }
+
+    function increase(productId) {
+        let quantityInput = document.querySelector(`.quantity[data-product-id="${productId}"]`);
+        let checkbox = document.querySelector(`.product-checkbox[data-product-id="${productId}"]`);
+        if (quantityInput && checkbox) {
+            let quantity = parseInt(quantityInput.value, 10);
+            if (quantity < 5) {
+                quantityInput.value = quantity + 1;
+                checkbox.dataset.quantity = quantity + 1;
+                updateTotalPrice();
+            }
+        }
+    }
+
+    function decrease(productId) {
+        let quantityInput = document.querySelector(`.quantity[data-product-id="${productId}"]`);
+        let checkbox = document.querySelector(`.product-checkbox[data-product-id="${productId}"]`);
+        if (quantityInput && checkbox) {
+            let quantity = parseInt(quantityInput.value, 10);
+            if (quantity > 1) {
+                quantityInput.value = quantity - 1;
+                checkbox.dataset.quantity = quantity - 1;
+                updateTotalPrice();
+            }
+        }
+    }
+
+    document.querySelectorAll('.product-checkbox').forEach(function (checkbox) {
+        checkbox.addEventListener('change', updateTotalPrice);
+    });
+
+    document.querySelectorAll('.quantity').forEach(function (input) {
+        input.addEventListener('change', function () {
+            var productId = this.dataset.productId;
+            var quantity = parseInt(this.value, 10);
+            if (quantity >= 1 && quantity <= 5) {
+                document.querySelector(`.product-checkbox[data-product-id="${productId}"]`).dataset.quantity = quantity;
+                updateTotalPrice();
+            }
+        });
+    });
+
+    function removeProduct(productId) {
+        let productElement = document.querySelector(`.product_box[data-product-id="${productId}"]`);
+        if (!productElement) {
+            console.error('Error: Product not found');
+            return;
+        }
+        else {
+            console.log('Product found');
+            fetch(`/delete_from_cart/${productId}`, {
+                method: 'DELETE',
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data.success);
+                    if (data.success) {
+                        console.log('Product deleted');
+                        productElement.remove();
+                        updateTotalPrice();
+                        updateCartUI();
+                        reloadCart();
+                    }
+                    else {
+                        console.error('Error:', data.message);
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+        }
+
+    }
+
+    function getSelectedProducts() {
+        var selectedProducts = [];
+        var quantity = 0;
+        document.querySelectorAll('.product-checkbox:checked').forEach(function (checkedCheckbox) {
+            let code = checkedCheckbox.dataset.productId
+            selectedProducts.push(code);
+            localStorage.setItem(code, checkedCheckbox.dataset.quantity);
+        });
+        fetch('/cart/order', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(selectedProducts),
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        document.getElementById('order').href = "{{ url_for('main.order') }}";
+    }
+
+    // Call updateCartUI when the page loads
+    document.addEventListener('DOMContentLoaded', updateCartUI);
+</script>
+{% endblock %}

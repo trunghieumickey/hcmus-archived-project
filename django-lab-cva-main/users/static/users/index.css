@@ -1,0 +1,40 @@
+label, input {
+    display: block;
+}
+span.helptext {
+    display: none;
+}
+body,h1,h2,h3,h4,h5 {font-family: "Roboto", sans-serif}
+body {
+    text-align: center;
+}
+input {
+    margin: 0 auto;
+}
+/* Add more selectors and rules as needed */
+body {font-size:16px;}
+
+a, input[type="submit"]{
+    display: inline-block;
+    padding: 0.5em 1em;
+    background-color: #007bff;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 0.25em;
+    transition: background-color 0.3s ease;
+}
+
+a:hover, input[type="submit"]:hover {
+    background-color: #0069d9;
+}
+
+form{
+    border: 1px solid black;
+    padding-bottom: 20px;
+}
+
+.login{
+    border: 1px solid black;
+    padding: 10px;
+    margin: 10px;   
+}

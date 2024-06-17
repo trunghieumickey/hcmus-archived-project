@@ -1,0 +1,25 @@
+<!--users/templates/registration/login.html-->
+
+{% extends 'users/base.html' %}
+
+{% block content %}
+<h2>Login</h2>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Login">
+</form>
+
+<div class="login">
+    <h2>Login Methods</h2>
+    <a href="{% url 'login' %}" class="btn btn-primary btn-block">🔑</a>
+    <a href="{% url 'facelogin'%}" class="btn btn-primary btn-block">😀</a>
+</div>
+
+<div>Face Login isn't implemented for now, it just a prove that the login method can be overided</div>
+
+<a href="{% url 'dashboard' %}">Dashboard</a>
+<a href="{% url 'password_reset' %}">Reset Password</a>
+<a href="{% url 'register' %}">Register</a>
+{% endblock %}

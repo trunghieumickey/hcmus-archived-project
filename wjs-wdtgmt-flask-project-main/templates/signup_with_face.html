@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="flex items-center justify-center min-h-screen">
+    <div class="flex flex-col w-full max-w-xs mx-auto">
+        <h1 class="text-3xl text-center font-bold mb-6">Đăng kí khuôn mặt</h1>
+        <form method="POST" enctype="multipart/form-data"
+            class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 flex flex-col items-center">
+            <div class="mb-4">
+                <label class="block text-center text-gray-700 text-sm font-bold mb-2" for="username">Tên người
+                    dùng</label>
+                <input
+                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    type="text" name="username" required>
+            </div>
+            <div class="mb-6">
+                <label class="block text-center text-gray-700 text-sm font-bold mb-2" for="webcam">Webcam Feed</label>
+                <video id="webcam" autoplay class="w-64 h-48"></video>
+                <canvas id="snapshot" class="hidden"></canvas>
+                <input type="hidden" id="image" name="image">
+            </div>
+            <div class="flex items-center justify-between">
+                <button type="button" id="capture"
+                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-4">Chụp</button>
+                <button type="submit"
+                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Đăng
+                    kí</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    const video = document.getElementById('webcam');
+    const canvas = document.getElementById('snapshot');
+    const capture = document.getElementById('capture');
+    const image = document.getElementById('image');
+
+    navigator.mediaDevices.getUserMedia({ video: true })
+        .then((stream) => {
+            video.srcObject = stream;
+        });
+
+    setInterval(() => {
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        canvas.getContext('2d').drawImage(video, 0, 0);
+        image.value = canvas.toDataURL('image/webp');
+    }, 5000);  // 5000 milliseconds = 5 seconds
+</script>
+{% endblock %}

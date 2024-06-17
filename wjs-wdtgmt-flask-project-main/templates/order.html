@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<a href="{{url_for('main.cart')}}" class="block mx-80 mt-10 font-bold hover:underline hover:text-blue-500">
+    << Quay về giỏ hàng</a>
+        <div>
+            {% for product in products %}
+            <div class="product_box" data-product-id="{{product.code}}">
+                <div class="flex-col border bg-gray-200 mx-80 mt-10">
+                    <div class="flex">
+                        <div class="border bg-gray-100 border-gray-300 rounded">
+                            <img src="{{ product.image }}" class="h-48">
+                        </div>
+                        <div class="ml-10">
+                            <a href="{{ url_for('main.product_info', code=product.code) }}" class="hover:underline">
+                                <p class="font-bold text-xl">{{ product.title }}</p>
+                            </a>
+                            <p class="text-red-500 font-bold">{{ product.price|format_price }} đ</p>
+                            <p class="text-sm">
+                                Số lượng
+                                <input disabled type="text" id="quantity-{{ product.code }}"
+                                    class="quantity border-2 border-gray-300 rounded w-8 text-center">
+                                <script>
+                                    function getQuantity(code) {
+                                        var code = '{{ product.code }}';
+                                        var quantity = localStorage.getItem(code);
+                                        localStorage.removeItem(code);
+                                        console.log(quantity);
+                                        document.getElementById('quantity-' + code).value = quantity;
+                                    }
+                                    getQuantity('{{ product.code }}');
+                                </script>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="flex-col border bg-gray-200 mx-80 mt-10">
+            <div class="flex-col my-7">
+                <label for="name" class="m-5 w-5 h-5">Họ và tên:</label>
+                <input type="text" id="name">
+                <label for="phone-number" class="m-5 w-5 h-5">Số điện thoại:</label>
+                <input type="text" id="phone-number" onchange="validatePhoneNumber()">
+                <br><br>
+                <label for="dropdown" class="m-5 w-5 h-5">Chọn cửa hàng:</label>
+                <select id="dropdown">
+                    <option value="option1">200 Nguyễn Văn Cừ</option>
+                    <option value="option2">355 Hai Bà Trưng</option>
+                    <option value="option3">7 Phan Xích Long</option>
+                </select>
+            </div>
+        </div>
+        <div class="bottom-0 border bg-white border-gray-400 rounded mx-80 mt-10 flex items-center justify-between">
+            <p class="font-bold text-xl ml-10">Tổng:
+                <span id="total-price" class="text-red-500 font-bold">0 đ</span>
+                <script>
+                    document.getElementById('total-price').innerHTML = parseInt(localStorage.getItem('totalPrice')).toLocaleString('en-US') + ' đ';
+                </script>
+            </p>
+            <div class="text-right mr-10">
+                <button class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                    onclick="send_bill()">
+                    Đặt hàng
+                </button>
+            </div>
+        </div>
+
+        <script>
+            function validatePhoneNumber() {
+                var phoneNumber = document.getElementById('phone-number').value;
+                if (isNaN(phoneNumber)) {
+                    alert('Please enter a valid phone number. Only digits are allowed.');
+                    phoneNumber = '';
+                    document.getElementById('phone-number').value = '';
+                }
+            }
+
+            function create_bill() {
+                var dropdown = document.getElementById('dropdown').value;
+                var actual_location = '';
+                switch (dropdown) {
+                    case 'option1':
+                        actual_location = '200 Nguyễn Văn Cừ';
+                        break;
+                    case 'option2':
+                        actual_location = '355 Hai Bà Trưng';
+                        break;
+                    case 'option3':
+                        actual_location = '7 Phan Xích Long';
+                        break;
+                }
+                var products = Array.from(document.querySelectorAll('.product_box')).map(function (product_box) {
+                    var product = {
+                        'code': product_box.getAttribute('data-product-id'),
+                        'quantity': parseInt(document.getElementById('quantity-' + product_box.getAttribute('data-product-id')).value),
+                        'product_title': product_box.querySelector('.font-bold').innerHTML
+                    };
+                    return product;
+                })
+                var bill = {
+                    'name': document.getElementById('name').value,
+                    'phoneNumber': document.getElementById('phone-number').value,
+                    'dropdown': actual_location,
+                    'products': products,
+                    'totalPrice': localStorage.getItem('totalPrice'),
+                    'date': new Date().toLocaleString()
+                };
+
+                return bill;
+            }
+
+            function send_bill() {
+                var bill = create_bill();
+                fetch('/create_bill', {
+                    method: 'POST',
+                    body: JSON.stringify(bill)
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Success:', data.success);
+                        if (data.success) {
+                            alert('Đặt hàng thành công');
+                            localStorage.clear();
+                            window.location.href = '/';
+                        }
+                        else {
+                            alert('Đặt hàng thất bại');
+                        }
+                    })
+                    .catch((error) => {
+                        console.error('Error:', error);
+                    });
+            }
+        </script>
+
+        {% endblock %}

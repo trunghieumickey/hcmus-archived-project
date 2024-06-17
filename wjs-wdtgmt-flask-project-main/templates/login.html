@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="flex items-center justify-center min-h-screen">
+    <div class="flex flex-col w-full max-w-xs mx-auto">
+        <h3 class="text-center text-2xl font-bold mb-4">Đăng nhập</h3>
+        <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <div class="bg-red-500 text-white px-4 py-3 rounded mb-4">
+                {{ messages[0] }}
+            </div>
+            {% endif %}
+            {% endwith %}
+            <form method="POST" action="/login">
+                <div class="mb-2">
+                    <input
+                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        type="email" name="email" placeholder="Email" autofocus="">
+                </div>
+                <input
+                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+                    type="password" name="password" placeholder="Mật khẩu">
+                <div class="mb-2">
+                    <label class="block text-gray-500 font-bold">
+                        <input class="leading-tight" type="checkbox" name="remember">
+                        <span class="text-sm">
+                            Duy trì đăng nhập
+                        </span>
+                    </label>
+                </div>
+                <div class="flex items-center justify-center">
+                    <button
+                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                        type="submit">
+                        Đăng nhập
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
